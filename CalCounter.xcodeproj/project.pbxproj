@@ -15,6 +15,7 @@
 		7650CB952340116B00B6AEAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7650CB932340116B00B6AEAA /* LaunchScreen.storyboard */; };
 		7650CBA02340116B00B6AEAA /* CalCounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7650CB9F2340116B00B6AEAA /* CalCounterTests.swift */; };
 		7650CBAB2340116B00B6AEAA /* CalCounterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7650CBAA2340116B00B6AEAA /* CalCounterUITests.swift */; };
+		7650CBB92340123F00B6AEAA /* CalorieList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7650CBB82340123F00B6AEAA /* CalorieList.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		7650CBA62340116B00B6AEAA /* CalCounterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalCounterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7650CBAA2340116B00B6AEAA /* CalCounterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalCounterUITests.swift; sourceTree = "<group>"; };
 		7650CBAC2340116B00B6AEAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7650CBB82340123F00B6AEAA /* CalorieList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				7650CB912340116B00B6AEAA /* Assets.xcassets */,
 				7650CB932340116B00B6AEAA /* LaunchScreen.storyboard */,
 				7650CB962340116B00B6AEAA /* Info.plist */,
+				7650CBB82340123F00B6AEAA /* CalorieList.swift */,
 			);
 			path = CalCounter;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				7650CB8D2340116A00B6AEAA /* ViewController.swift in Sources */,
 				7650CB892340116A00B6AEAA /* AppDelegate.swift in Sources */,
 				7650CB8B2340116A00B6AEAA /* SceneDelegate.swift in Sources */,
+				7650CBB92340123F00B6AEAA /* CalorieList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

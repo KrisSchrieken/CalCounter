@@ -22,6 +22,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     @IBOutlet weak var calLabel: UILabel!
     
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
      {
          return foodList.count
@@ -159,14 +160,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let list = NSManagedObject(entity: entity,
                                      insertInto: managedContext)
         
+        // add food and calories
         list.setValue(food, forKeyPath: "food")
         list.setValue(calories, forKeyPath: "calories")
         
+        // save to core data
         do {
+            
           try managedContext.save()
           foodList.append(list)
+            
         } catch let error as NSError {
+            
           print("Could not save. \(error), \(error.userInfo)")
+            
         }
      
         calCounter.reloadData()
@@ -174,7 +181,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     // updates the calorie tracker
     private func updateTracker() {
-        
         
         calLabel.text = "\(totalCalories)" + "/2000 Daily Calories"
         
@@ -192,9 +198,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CalorieList")
         
         do {
-            let test = try managedContext.fetch(fetchRequest)
+            let data = try managedContext.fetch(fetchRequest)
             
-            let itemToDelete = test[ row ]
+            let itemToDelete = data[ row ]
             
             managedContext.delete( itemToDelete )
             
@@ -208,8 +214,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 
             }
             
-        }
-        catch {
+        } catch {
             print( "Couldn't fetch " )
         }
         
@@ -218,64 +223,56 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func deleteAllData() {
         
         // saving data to core data
-               guard let appDelegate =
-                  UIApplication.shared.delegate as? AppDelegate else {
-                  return
-               }
+        guard let appDelegate =
+           UIApplication.shared.delegate as? AppDelegate else {
+                return
+        }
               
-              let managedContext = appDelegate.persistentContainer.viewContext
-              let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CalorieList")
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CalorieList")
               
-              do {
-                  let test = try managedContext.fetch(fetchRequest)
+        do {
+            let data = try managedContext.fetch(fetchRequest)
                 
-              
-                  for itemToDelete in test {
+            for itemToDelete in data {
                 
-                    managedContext.delete( itemToDelete )
+            managedContext.delete( itemToDelete )
                     
-                }
-                
-                  
-                  do {
+            }
+            do {
                       
-                      try managedContext.save()
+                try managedContext.save()
                       
-                  } catch{
+            } catch{
                       
-                      print( "Didn't Save" )
+                print( "Didn't Save." )
                       
-                  }
-                    }
-                
-                  
-              
-              catch {
-                  print( "Couldn't fetch " )
-              }
+            }
+        } catch {
+            
+          print( "Couldn't fetch " )
+            
+        }
         
     }
     
+    // save the initial total calories at start of app
     func saveTotalCalories() {
-        // saving data to core data
-               guard let appDelegate =
-                 UIApplication.shared.delegate as? AppDelegate else {
-                 return
-               }
+  
+        guard let appDelegate =
+            UIApplication.shared.delegate as? AppDelegate else {
+              return
+        }
                
                
-               let managedContext =
-                 appDelegate.persistentContainer.viewContext
+        let managedContext = appDelegate.persistentContainer.viewContext
                
-               let entity =
-                 NSEntityDescription.entity(forEntityName: "TotalCalories",
-                                            in: managedContext)!
+        let entity = NSEntityDescription.entity(forEntityName: "TotalCalories", in: managedContext)!
                
-               let list = NSManagedObject(entity: entity,
-                                            insertInto: managedContext)
+        let list = NSManagedObject(entity: entity, insertInto: managedContext)
                 
-              // self.deleteTC()
-               list.setValue(totalCalories, forKeyPath: "total")
+        // add calories to data
+        list.setValue(totalCalories, forKeyPath: "total")
         
         do {
              try managedContext.save()
@@ -286,6 +283,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func updateTotalCalories() {
+        
         guard let appDelegate =
           UIApplication.shared.delegate as? AppDelegate else {
           return
@@ -296,41 +294,21 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "TotalCalories")
         do {
-            let test = try managedContext.fetch(fetchRequest)
+            let data = try managedContext.fetch(fetchRequest)
             
-            let update = test[0]
+            let update = data[0]
             update.setValue( totalCalories, forKeyPath: "total")
             do {
-                        try managedContext.save()
-                      } catch let error as NSError {
-                        print("Could not save. \(error), \(error.userInfo)")
-                      }
+                
+                try managedContext.save()
+                } catch let error as NSError {
+                  print("Could not save. \(error), \(error.userInfo)")
+                }
+            
         } catch {
             print( "Couldn't fetch" )
         }
         
-        
-    }
-    
-    func deleteTC() {
-        guard let appDelegate =
-                 UIApplication.shared.delegate as? AppDelegate else {
-                 return
-               }
-               
-               let managedContext =
-                 appDelegate.persistentContainer.viewContext
-
-               let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "TotalCalories")
-               do {
-                 let test = try managedContext.fetch(fetchRequest)
-                 
-                      managedContext.delete( test[0] )
-                  
-                
-               } catch {
-                print("error")
-               }
     }
     
     override func viewDidLoad() {
@@ -341,7 +319,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(ViewController.didTapDelete(_:)))
         
-        saveTotalCalories()
+        self.saveTotalCalories()
      
     }
     
@@ -360,7 +338,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CalorieList")
    let fR = NSFetchRequest<NSManagedObject>(entityName: "TotalCalories")
    
-   
    do {
     
      foodList = try managedContext.fetch(fetchRequest)
@@ -374,7 +351,5 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
  }
 
-
-
-}
+} // end of class
 

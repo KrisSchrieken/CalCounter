@@ -6,7 +6,7 @@
 //  Copyright © 2019 Kristopher Schrieken. All rights reserved.
 //
 
-import Foundation
+/*import Foundation
 
 class CalorieList: NSObject, NSCoding {
     
@@ -72,3 +72,4 @@ extension CalorieList {
     }
 }
 
+*/

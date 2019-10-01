@@ -12,9 +12,11 @@ import CoreData
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    private var totalCalories = 0;
+    private var totalCalories = 0
     
-    private var foodList: [CalorieList] = []
+    private var savedTC: [NSManagedObject] = []
+    
+    private var foodList: [NSManagedObject] = []
     
     @IBOutlet weak var calCounter: UITableView!
     
@@ -28,19 +30,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // go through calorie list to put into cells
       func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
      {
+        
+        let item = foodList[ indexPath.row ]
         let cell = calCounter.dequeueReusableCell(withIdentifier: "food_item", for: indexPath)
 
-        if indexPath.row < foodList.count
-        {
-            let item = foodList[indexPath.row]
-            cell.textLabel?.text = item.food
-            
-            let cals = "\(item.calories)"
-            cell.detailTextLabel?.text = cals
-            
-        }
-
+        cell.textLabel?.text = item.value(forKeyPath: "food") as? String
+        
+        let cals = item.value(forKeyPath: "calories") as? Int
+        cell.detailTextLabel?.text = "\(cals ?? 0)"
         return cell
+        
      }
     
     // remove cells
@@ -48,10 +47,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     {
         if indexPath.row < foodList.count
         {
-            let removedCals = foodList[ indexPath.row ].calories
+            let removedCals = foodList[ indexPath.row ].value(forKeyPath:"calories") as? Int ?? 0
             totalCalories -= removedCals
             foodList.remove(at: indexPath.row)
+            self.deleteData( row: indexPath.row )
             calCounter.deleteRows(at: [indexPath], with: .top)
+            self.updateTotalCalories()
             self.updateTracker()
         }
     }
@@ -98,6 +99,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                         calories = Int(cals) ?? 0
                         self.addFood(food: food, calories: calories)
                         self.totalCalories += calories
+                        self.updateTotalCalories()
                         self.updateTracker()
                     }
                 }))
@@ -125,8 +127,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         alert.addAction(UIAlertAction(title: "YES", style: .default, handler: { (_) in
              
             self.foodList.removeAll()
+            self.deleteAllData()
             self.calCounter.reloadData()
             self.totalCalories = 0
+            self.updateTotalCalories()
             self.updateTracker()
             
         }))
@@ -138,35 +142,195 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // updates foodList array with new food item
     private func addFood( food: String, calories: Int )
     {
-        // The index of the new item will be the current item count
-        let newIndex = foodList.count
-
-        // Create new item and add it to the todo items list
-        foodList.append(CalorieList(food: food, calories: calories))
-
-        // Tell the table view a new row has been created
-        calCounter.insertRows( at: [IndexPath(row: newIndex, section: 0)], with: .top )
+        // saving data to core data
+        guard let appDelegate =
+          UIApplication.shared.delegate as? AppDelegate else {
+          return
+        }
+        
+        
+        let managedContext =
+          appDelegate.persistentContainer.viewContext
+        
+        let entity =
+          NSEntityDescription.entity(forEntityName: "CalorieList",
+                                     in: managedContext)!
+        
+        let list = NSManagedObject(entity: entity,
+                                     insertInto: managedContext)
+        
+        list.setValue(food, forKeyPath: "food")
+        list.setValue(calories, forKeyPath: "calories")
+        
+        do {
+          try managedContext.save()
+          foodList.append(list)
+        } catch let error as NSError {
+          print("Could not save. \(error), \(error.userInfo)")
+        }
+     
+        calCounter.reloadData()
     }
     
     // updates the calorie tracker
     private func updateTracker() {
         
+        
         calLabel.text = "\(totalCalories)" + "/2000 Daily Calories"
         
     }
     
-    private func saveFoodList() {
+    func deleteData(row: Int) {
         
-           try NSKeyedArchiver.archivedData(withRootObject:
-            CalorieList.ArchiveURL.path, requiringSecureCoding: false)
-          
+      // saving data to core data
+         guard let appDelegate =
+            UIApplication.shared.delegate as? AppDelegate else {
+            return
+         }
         
-       }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CalorieList")
+        
+        do {
+            let test = try managedContext.fetch(fetchRequest)
+            
+            let itemToDelete = test[ row ]
+            
+            managedContext.delete( itemToDelete )
+            
+            do {
+                
+                try managedContext.save()
+                
+            } catch{
+                
+                print( "Didn't Save" )
+                
+            }
+            
+        }
+        catch {
+            print( "Couldn't fetch " )
+        }
+        
+    }
     
-    private func loadFoodList() -> [CalorieList] {
+    func deleteAllData() {
         
-        return (NSKeyedUnarchiver.unarchivedObject(ofClasses: NSCoding.Protocol, from: CalorieList.ArchiveURL.path) as? [CalorieList])!
+        // saving data to core data
+               guard let appDelegate =
+                  UIApplication.shared.delegate as? AppDelegate else {
+                  return
+               }
+              
+              let managedContext = appDelegate.persistentContainer.viewContext
+              let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CalorieList")
+              
+              do {
+                  let test = try managedContext.fetch(fetchRequest)
+                
+              
+                  for itemToDelete in test {
+                
+                    managedContext.delete( itemToDelete )
+                    
+                }
+                
+                  
+                  do {
+                      
+                      try managedContext.save()
+                      
+                  } catch{
+                      
+                      print( "Didn't Save" )
+                      
+                  }
+                    }
+                
+                  
+              
+              catch {
+                  print( "Couldn't fetch " )
+              }
         
+    }
+    
+    func saveTotalCalories() {
+        // saving data to core data
+               guard let appDelegate =
+                 UIApplication.shared.delegate as? AppDelegate else {
+                 return
+               }
+               
+               
+               let managedContext =
+                 appDelegate.persistentContainer.viewContext
+               
+               let entity =
+                 NSEntityDescription.entity(forEntityName: "TotalCalories",
+                                            in: managedContext)!
+               
+               let list = NSManagedObject(entity: entity,
+                                            insertInto: managedContext)
+                
+              // self.deleteTC()
+               list.setValue(totalCalories, forKeyPath: "total")
+        
+        do {
+             try managedContext.save()
+           } catch let error as NSError {
+             print("Could not save. \(error), \(error.userInfo)")
+           }
+        
+    }
+    
+    func updateTotalCalories() {
+        guard let appDelegate =
+          UIApplication.shared.delegate as? AppDelegate else {
+          return
+        }
+        
+        let managedContext =
+          appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "TotalCalories")
+        do {
+            let test = try managedContext.fetch(fetchRequest)
+            
+            let update = test[0]
+            update.setValue( totalCalories, forKeyPath: "total")
+            do {
+                        try managedContext.save()
+                      } catch let error as NSError {
+                        print("Could not save. \(error), \(error.userInfo)")
+                      }
+        } catch {
+            print( "Couldn't fetch" )
+        }
+        
+        
+    }
+    
+    func deleteTC() {
+        guard let appDelegate =
+                 UIApplication.shared.delegate as? AppDelegate else {
+                 return
+               }
+               
+               let managedContext =
+                 appDelegate.persistentContainer.viewContext
+
+               let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "TotalCalories")
+               do {
+                 let test = try managedContext.fetch(fetchRequest)
+                 
+                      managedContext.delete( test[0] )
+                  
+                
+               } catch {
+                print("error")
+               }
     }
     
     override func viewDidLoad() {
@@ -176,8 +340,40 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(ViewController.didTapAddItemButton(_:)))
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(ViewController.didTapDelete(_:)))
+        
+        saveTotalCalories()
      
     }
+    
+ override func viewWillAppear(_ animated: Bool) {
+   super.viewWillAppear(animated)
+   
+   
+   guard let appDelegate =
+     UIApplication.shared.delegate as? AppDelegate else {
+       return
+   }
+   
+   let managedContext = appDelegate.persistentContainer.viewContext
+   
+   
+   let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "CalorieList")
+   let fR = NSFetchRequest<NSManagedObject>(entityName: "TotalCalories")
+   
+   
+   do {
+    
+     foodList = try managedContext.fetch(fetchRequest)
+     savedTC = try managedContext.fetch(fR)
+     totalCalories = savedTC[0].value( forKeyPath: "total" ) as? Int ?? 0
+     updateTracker()
+    
+   } catch let error as NSError {
+     print("Could not fetch. \(error), \(error.userInfo)")
+   }
+    
+ }
+
 
 
 }

@@ -8,6 +8,7 @@
 
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -151,6 +152,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     private func updateTracker() {
         
         calLabel.text = "\(totalCalories)" + "/2000 Daily Calories"
+        
+    }
+    
+    private func saveFoodList() {
+        
+           try NSKeyedArchiver.archivedData(withRootObject:
+            CalorieList.ArchiveURL.path, requiringSecureCoding: false)
+          
+        
+       }
+    
+    private func loadFoodList() -> [CalorieList] {
+        
+        return (NSKeyedUnarchiver.unarchivedObject(ofClasses: NSCoding.Protocol, from: CalorieList.ArchiveURL.path) as? [CalorieList])!
         
     }
     

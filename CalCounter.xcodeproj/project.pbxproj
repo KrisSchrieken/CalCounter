@@ -16,6 +16,7 @@
 		7650CBA02340116B00B6AEAA /* CalCounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7650CB9F2340116B00B6AEAA /* CalCounterTests.swift */; };
 		7650CBAB2340116B00B6AEAA /* CalCounterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7650CBAA2340116B00B6AEAA /* CalCounterUITests.swift */; };
 		7650CBB92340123F00B6AEAA /* CalorieList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7650CBB82340123F00B6AEAA /* CalorieList.swift */; };
+		7650CBBC234317E900B6AEAA /* CalCounter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7650CBBA234317E900B6AEAA /* CalCounter.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		7650CBAA2340116B00B6AEAA /* CalCounterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalCounterUITests.swift; sourceTree = "<group>"; };
 		7650CBAC2340116B00B6AEAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7650CBB82340123F00B6AEAA /* CalorieList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieList.swift; sourceTree = "<group>"; };
+		7650CBBB234317E900B6AEAA /* CalCounter.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CalCounter.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				7650CB882340116A00B6AEAA /* AppDelegate.swift */,
+				7650CBBA234317E900B6AEAA /* CalCounter.xcdatamodeld */,
 				7650CB8A2340116A00B6AEAA /* SceneDelegate.swift */,
 				7650CB8C2340116A00B6AEAA /* ViewController.swift */,
 				7650CB8E2340116A00B6AEAA /* Main.storyboard */,
@@ -262,6 +265,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7650CBBC234317E900B6AEAA /* CalCounter.xcdatamodeld in Sources */,
 				7650CB8D2340116A00B6AEAA /* ViewController.swift in Sources */,
 				7650CB892340116A00B6AEAA /* AppDelegate.swift in Sources */,
 				7650CB8B2340116A00B6AEAA /* SceneDelegate.swift in Sources */,
@@ -594,6 +598,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		7650CBBA234317E900B6AEAA /* CalCounter.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				7650CBBB234317E900B6AEAA /* CalCounter.xcdatamodel */,
+			);
+			currentVersion = 7650CBBB234317E900B6AEAA /* CalCounter.xcdatamodel */;
+			path = CalCounter.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 7650CB7D2340116A00B6AEAA /* Project object */;
 }

@@ -8,7 +8,10 @@
 
 import Foundation
 
-class CalorieList {
+class CalorieList: NSObject, NSCoding {
+    
+    static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+    static let ArchiveURL = DocumentsDirectory.appendingPathComponent("food")
     
     var food: String
     var calories: Int
@@ -20,6 +23,40 @@ class CalorieList {
         self.calories = calories;
         
     }
+    
+    required  init?(coder aDecoder: NSCoder)
+    {
+        // Try to unserialize the "title" variable
+        if let food = aDecoder.decodeObject(forKey: "food") as? String
+        {
+            self.food = food
+        }
+        else
+        {
+            // no food key
+            return nil
+        }
+
+        // Check if the key "done" exists, since decodeBool() always succeeds
+        if let calories = aDecoder.decodeObject(forKey: "calories") as? Int
+        {
+            self.calories = calories
+        }
+        else
+        {
+            // no calorie key
+            return nil
+        }
+        
+    }
+
+    func encode(with aCoder: NSCoder)
+    {
+        // Store the objects into the coder object
+        aCoder.encode(self.food, forKey: "food")
+        aCoder.encode(self.calories, forKey: "calories")
+    }
+    
     
 }
 
@@ -34,3 +71,4 @@ extension CalorieList {
         ]
     }
 }
+

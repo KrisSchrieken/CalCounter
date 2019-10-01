@@ -47,8 +47,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     {
         if indexPath.row < foodList.count
         {
+            let removedCals = foodList[ indexPath.row ].calories
+            totalCalories -= removedCals
             foodList.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .top)
+            calCounter.deleteRows(at: [indexPath], with: .top)
+            self.updateTracker()
         }
     }
     
@@ -107,6 +110,29 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.present( alert1, animated: true, completion: nil )
       
     }
+    
+    @objc private func didTapDelete( _ sender: UIBarButtonItem ) {
+        
+        let alert = UIAlertController(
+            title: "Reset Counter?",
+            message: "",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "NO", style: .cancel, handler: nil ))
+        
+        alert.addAction(UIAlertAction(title: "YES", style: .default, handler: { (_) in
+             
+            self.foodList.removeAll()
+            self.calCounter.reloadData()
+            self.totalCalories = 0
+            self.updateTracker()
+            
+        }))
+        
+        self.present( alert, animated: true, completion: nil )
+        
+    }
 
     // updates foodList array with new food item
     private func addFood( food: String, calories: Int )
@@ -133,6 +159,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         // Do any additional setup after loading the view.
       
        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(ViewController.didTapAddItemButton(_:)))
+        
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(ViewController.didTapDelete(_:)))
      
     }
 
